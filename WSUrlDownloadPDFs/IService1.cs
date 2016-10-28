@@ -12,7 +12,7 @@ namespace WSUrlDownloadPDFs
     public interface IService1
     {
         [OperationContract]
-        string GetData(int value);
+        void getPDFs(string URL, string selectHREFContains, string ruta);
 
         [OperationContract]
         CompositeType GetDataUsingDataContract(CompositeType composite);

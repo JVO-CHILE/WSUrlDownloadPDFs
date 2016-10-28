@@ -1,0 +1,6 @@
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\bin\Debug\WSUrlDownloadPDFs.dll.config
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\bin\Debug\WSUrlDownloadPDFs.dll
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\bin\Debug\WSUrlDownloadPDFs.pdb
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\obj\Debug\WSUrlDownloadPDFs.dll
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\obj\Debug\WSUrlDownloadPDFs.pdb
+D:\Proyectos\Personal\WSUrlDownloadPDFs\WSUrlDownloadPDFs\obj\Debug\WSUrlDownloadPDFs.csprojResolveAssemblyReference.cache
