@@ -46,7 +46,7 @@ namespace WSUrlDownloadPDFs
                         .Where(f => f.Contains(selectHREFContains))
                         .ToList();
 
-                DownloadAllPDFs(links, w, ruta);
+                DownloadAllPDFs(links, w, ruta, URL);
             }
             catch (Exception ex) {}
         }
@@ -66,21 +66,26 @@ namespace WSUrlDownloadPDFs
         ///<param name="ruta">
         ///Ruta donde se descargan los PDFs
         ///</param>
-        private void DownloadAllPDFs(List<String> links, WebClient w, string ruta)
+        private void DownloadAllPDFs(List<String> links, WebClient w, string ruta, string URL)
         {
             DirectoryInfo di;
-            String file, fullPath;
+            String file, fullPath, pathPaciente, rut, capFileField;
 
+            rut = CaptureRut(URL);
+            pathPaciente = ruta + rut + "\\";
+            
             file = "File_" + Guid.NewGuid().ToString("N") + ".pdf";
 
             if (!Directory.Exists(ruta))
-            {
                 di = Directory.CreateDirectory(ruta);
-            }
+
+            if (!Directory.Exists(pathPaciente))
+                di = Directory.CreateDirectory(pathPaciente);
 
             foreach (var item in links)
             {
-                fullPath = ruta + file;
+                capFileField = CaptureFileFieldInUrl(item);
+                fullPath = pathPaciente + capFileField + ".pdf";
                 w.DownloadFile(HREFtoURL(item), fullPath);
             }
         }
@@ -97,6 +102,44 @@ namespace WSUrlDownloadPDFs
         private string HREFtoURL(string str)
         {
             return str.Substring(6, str.Count() - 7);
+        }
+
+        ///<summary>
+        ///Captura RUT de paciente desde URL
+        ///</summary>
+        ///<return>
+        ///string
+        ///</return>
+        ///<param name="URL">
+        ///Dirección desde donde se captura código HTML (ej: http://192.321.315.09/INT/Service/Default.aspx?p=12311)
+        ///</param>
+        private string CaptureRut(string URL)
+        {
+            string rut = String.Empty;
+            int initialPosition = URL.IndexOf("param1");
+            
+            rut = URL.Substring(initialPosition + 7);
+            
+            return rut;
+        }
+
+        ///<summary>
+        ///Captura campo FILE de URL de un PDF
+        ///</summary>
+        ///<return>
+        ///string
+        ///</return>
+        ///<param name="UrlPDf">
+        ///Dirección desde donde se captura código HTML (ej: http://192.321.315.09/abc/InfoemPDF?id=230269&idprestacion=1872&file=230269.1872.20161019211411)
+        ///</param>
+        private string CaptureFileFieldInUrl(string UrlPDF)
+        {
+            string field = String.Empty;
+            int initialPosition = UrlPDF.IndexOf("file");
+
+            field = UrlPDF.Substring(initialPosition + 5).Replace("'", "");
+
+            return field;
         }
 
         public CompositeType GetDataUsingDataContract(CompositeType composite)
