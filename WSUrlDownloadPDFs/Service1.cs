@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 
 namespace WSUrlDownloadPDFs
 {
-    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código y en el archivo de configuración a la vez.
     public class Service1 : IService1
     {
         ///<summary>
@@ -20,7 +19,7 @@ namespace WSUrlDownloadPDFs
         ///void - (Se descargan archivos PDF en "ruta" dada)
         ///</return>
         ///<param name="URL">
-        ///Dirección desde donde se captura código HTML (ej: http://192.321.315.09/INT/Service/Default.aspx?p=12311)
+        ///Dirección desde donde se captura código HTML (ej: http://192.321.315.09/T/Service/Default.aspx?p=12311)
         ///</param>
         ///<param name="selectHREFContains">
         ///Filtro que permite seleccionar HREF específicos dentro del HTML
@@ -48,7 +47,7 @@ namespace WSUrlDownloadPDFs
 
                 DownloadAllPDFs(links, w, ruta, URL);
             }
-            catch (Exception ex) {}
+            catch (Exception ex) { }
         }
 
         ///<summary>
@@ -69,25 +68,27 @@ namespace WSUrlDownloadPDFs
         private void DownloadAllPDFs(List<String> links, WebClient w, string ruta, string URL)
         {
             DirectoryInfo di;
-            String file, fullPath, pathPaciente, rut, capFileField;
+            String fullPath, pathPaciente, rut, capFileField;
 
             rut = CaptureRut(URL);
             pathPaciente = ruta + rut + "\\";
-            
-            file = "File_" + Guid.NewGuid().ToString("N") + ".pdf";
 
-            if (!Directory.Exists(ruta))
-                di = Directory.CreateDirectory(ruta);
-
-            if (!Directory.Exists(pathPaciente))
-                di = Directory.CreateDirectory(pathPaciente);
-
-            foreach (var item in links)
+            try
             {
-                capFileField = CaptureFileFieldInUrl(item);
-                fullPath = pathPaciente + capFileField + ".pdf";
-                w.DownloadFile(HREFtoURL(item), fullPath);
+                if (!Directory.Exists(ruta))
+                    di = Directory.CreateDirectory(ruta);
+
+                if (!Directory.Exists(pathPaciente))
+                    di = Directory.CreateDirectory(pathPaciente);
+
+                foreach (var item in links)
+                {
+                    capFileField = CaptureFileFieldInUrl(item);
+                    fullPath = pathPaciente + capFileField + ".pdf";
+                    w.DownloadFile(HREFtoURL(item), fullPath);
+                }
             }
+            catch (Exception ex) { }
         }
 
         ///<summary>
@@ -101,7 +102,15 @@ namespace WSUrlDownloadPDFs
         ///</param>        
         private string HREFtoURL(string str)
         {
-            return str.Substring(6, str.Count() - 7);
+            try
+            {
+                return str.Substring(6, str.Count() - 7);
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+
         }
 
         ///<summary>
@@ -116,11 +125,18 @@ namespace WSUrlDownloadPDFs
         private string CaptureRut(string URL)
         {
             string rut = String.Empty;
-            int initialPosition = URL.IndexOf("param1");
-            
-            rut = URL.Substring(initialPosition + 7);
-            
-            return rut;
+            int initialPosition;
+            try
+            {
+                initialPosition = URL.IndexOf("param1");
+                rut = URL.Substring(initialPosition + 7);
+
+                return rut;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
         }
 
         ///<summary>
@@ -135,11 +151,20 @@ namespace WSUrlDownloadPDFs
         private string CaptureFileFieldInUrl(string UrlPDF)
         {
             string field = String.Empty;
-            int initialPosition = UrlPDF.IndexOf("file");
+            int initialPosition;
 
-            field = UrlPDF.Substring(initialPosition + 5).Replace("'", "");
+            try
+            {
+                initialPosition = UrlPDF.IndexOf("file");
+                field = UrlPDF.Substring(initialPosition + 5).Replace("'", "");
 
-            return field;
+                return field;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+
         }
 
         public CompositeType GetDataUsingDataContract(CompositeType composite)
